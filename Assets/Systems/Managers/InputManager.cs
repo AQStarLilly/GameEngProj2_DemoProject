@@ -22,6 +22,14 @@ public class InputManager : MonoBehaviour, Inputs.IPlayerActions
     public event Action JumpPerformedInputEvent;
     public event Action JumpCanceledInputEvent;
 
+    public event Action CrouchStartedInputEvent;
+    public event Action CrouchPerformedInputEvent;
+    public event Action CrouchCanceledInputEvent;
+
+    public event Action SprintStartedInputEvent;
+    public event Action SprintPerformedInputEvent;
+    public event Action SprintCanceledInputEvent;
+
     #endregion
 
     #region Input Callbacks
@@ -48,6 +56,38 @@ public class InputManager : MonoBehaviour, Inputs.IPlayerActions
         if (context.canceled)
         {
             JumpCanceledInputEvent?.Invoke();
+        }
+    }
+
+    public void OnCrouch(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            CrouchStartedInputEvent?.Invoke();
+        }
+        if (context.performed)
+        {
+            CrouchPerformedInputEvent?.Invoke();
+        }
+        if (context.canceled)
+        {
+            CrouchCanceledInputEvent?.Invoke();
+        }
+    }
+
+    public void OnSprint(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            SprintStartedInputEvent?.Invoke();
+        }
+        if (context.performed)
+        {
+            SprintPerformedInputEvent?.Invoke();
+        }
+        if (context.canceled)
+        {
+            SprintCanceledInputEvent?.Invoke();
         }
     }
 

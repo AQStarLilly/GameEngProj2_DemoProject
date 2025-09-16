@@ -43,6 +43,32 @@ public class PlayerController : MonoBehaviour
         Debug.Log("Jump Canceled");
     }
 
+    void CrouchStartedInput()
+    {
+        Debug.Log("Crouch Started");
+    }
+    void CrouchPerformedInput()
+    {
+        Debug.Log("Crouch Performed");
+    }
+    void CrouchCanceledInput()
+    {
+        Debug.Log("Crouch Canceled");
+    }
+
+    void SprintStartedInput()
+    {
+        Debug.Log("Sprint Started");
+    }
+    void SprintPerformedInput()
+    {
+        Debug.Log("Sprint Performed");
+    }
+    void SprintCanceledInput()
+    {
+        Debug.Log("Sprint Canceled");
+    }
+
 
     #endregion
 
@@ -54,6 +80,14 @@ public class PlayerController : MonoBehaviour
         inputManager.JumpStartedInputEvent += JumpStartedInput;
         inputManager.JumpPerformedInputEvent += JumpPerformedInput;
         inputManager.JumpCanceledInputEvent += JumpCanceledInput;
+
+        inputManager.CrouchStartedInputEvent += CrouchStartedInput;
+        inputManager.CrouchPerformedInputEvent += CrouchPerformedInput;
+        inputManager.CrouchCanceledInputEvent += CrouchCanceledInput;
+
+        inputManager.SprintStartedInputEvent += SprintStartedInput;
+        inputManager.SprintPerformedInputEvent += SprintPerformedInput;
+        inputManager.SprintCanceledInputEvent += SprintCanceledInput;
     }
 
     void OnDestroy()
@@ -64,6 +98,14 @@ public class PlayerController : MonoBehaviour
         inputManager.JumpStartedInputEvent -= JumpStartedInput;
         inputManager.JumpPerformedInputEvent -= JumpPerformedInput;
         inputManager.JumpCanceledInputEvent -= JumpCanceledInput;
+
+        inputManager.CrouchStartedInputEvent -= CrouchStartedInput;
+        inputManager.CrouchPerformedInputEvent -= CrouchPerformedInput;
+        inputManager.CrouchCanceledInputEvent -= CrouchCanceledInput;
+
+        inputManager.SprintStartedInputEvent -= SprintStartedInput;
+        inputManager.SprintPerformedInputEvent -= SprintPerformedInput;
+        inputManager.SprintCanceledInputEvent -= SprintCanceledInput;
     }
 
 }
