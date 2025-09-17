@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -30,45 +31,33 @@ public class PlayerController : MonoBehaviour
         Debug.Log($"Look Input: {lookInput}");
     }
 
-    void JumpStartedInput()
+    void JumpInputEvent(InputAction.CallbackContext context)
     {
-        Debug.Log("Jump Started");
+        if (context.started)
+        {
+            Debug.Log("Jump Started");
+        }
+        if (context.performed)
+        {
+            Debug.Log("Hold");
+        }
     } 
-    void JumpPerformedInput()
+    
+    void CrouchInputEvent(InputAction.CallbackContext context)
     {
-        Debug.Log("Jump Performed");
-    }
-    void JumpCanceledInput()
-    {
-        Debug.Log("Jump Canceled");
-    }
-
-    void CrouchStartedInput()
-    {
-        Debug.Log("Crouch Started");
-    }
-    void CrouchPerformedInput()
-    {
-        Debug.Log("Crouch Performed");
-    }
-    void CrouchCanceledInput()
-    {
-        Debug.Log("Crouch Canceled");
+        if (context.started)
+        {
+            Debug.Log("Crouch Started");
+        }
     }
 
-    void SprintStartedInput()
+    void SprintInputEvent(InputAction.CallbackContext context)
     {
-        Debug.Log("Sprint Started");
+        if (context.started)
+        {
+            Debug.Log("Sprint Started");
+        }
     }
-    void SprintPerformedInput()
-    {
-        Debug.Log("Sprint Performed");
-    }
-    void SprintCanceledInput()
-    {
-        Debug.Log("Sprint Canceled");
-    }
-
 
     #endregion
 
@@ -77,17 +66,9 @@ public class PlayerController : MonoBehaviour
         inputManager.MoveInputEvent += SetMoveInput;
         inputManager.LookInputEvent += SetLookEvent;
 
-        inputManager.JumpStartedInputEvent += JumpStartedInput;
-        inputManager.JumpPerformedInputEvent += JumpPerformedInput;
-        inputManager.JumpCanceledInputEvent += JumpCanceledInput;
-
-        inputManager.CrouchStartedInputEvent += CrouchStartedInput;
-        inputManager.CrouchPerformedInputEvent += CrouchPerformedInput;
-        inputManager.CrouchCanceledInputEvent += CrouchCanceledInput;
-
-        inputManager.SprintStartedInputEvent += SprintStartedInput;
-        inputManager.SprintPerformedInputEvent += SprintPerformedInput;
-        inputManager.SprintCanceledInputEvent += SprintCanceledInput;
+        inputManager.JumpInputEvent += JumpInputEvent;
+        inputManager.CrouchInputEvent += CrouchInputEvent;
+        inputManager.SprintInputEvent += SprintInputEvent;
     }
 
     void OnDestroy()
@@ -95,17 +76,9 @@ public class PlayerController : MonoBehaviour
         inputManager.MoveInputEvent -= SetMoveInput;
         inputManager.LookInputEvent -= SetLookEvent;
 
-        inputManager.JumpStartedInputEvent -= JumpStartedInput;
-        inputManager.JumpPerformedInputEvent -= JumpPerformedInput;
-        inputManager.JumpCanceledInputEvent -= JumpCanceledInput;
-
-        inputManager.CrouchStartedInputEvent -= CrouchStartedInput;
-        inputManager.CrouchPerformedInputEvent -= CrouchPerformedInput;
-        inputManager.CrouchCanceledInputEvent -= CrouchCanceledInput;
-
-        inputManager.SprintStartedInputEvent -= SprintStartedInput;
-        inputManager.SprintPerformedInputEvent -= SprintPerformedInput;
-        inputManager.SprintCanceledInputEvent -= SprintCanceledInput;
+        inputManager.JumpInputEvent -= JumpInputEvent;
+        inputManager.CrouchInputEvent -= CrouchInputEvent;
+        inputManager.SprintInputEvent -= SprintInputEvent;
     }
 
 }
