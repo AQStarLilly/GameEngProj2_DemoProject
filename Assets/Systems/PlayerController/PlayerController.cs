@@ -124,8 +124,6 @@ public class PlayerController : MonoBehaviour
             targetMoveSpeed = walkMoveSpeed;
         }
 
-
-
         //Step 3: Smoothly Interpolate Current Speed towards Target Speed
         float lerpSpeed = 1f - Mathf.Pow(0.01f, Time.deltaTime / speedTransitionDuration);
         currentMoveSpeed = Mathf.Lerp(currentMoveSpeed, targetMoveSpeed, lerpSpeed);
