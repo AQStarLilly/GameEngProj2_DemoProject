@@ -69,18 +69,13 @@ public class PlayerController : MonoBehaviour
         Vector3 worldMoveDirection = transform.TransformDirection(moveInputDirection);
 
         //Step 2: Determine Movement Speed
-        float targetMoveSpeed = moveSpeed;
+        float targetMoveSpeed = currentMoveSpeed;
 
         if(sprintInput == true)
         {
             targetMoveSpeed = sprintMoveSpeed;
         }
-        else
-        {
-            targetMoveSpeed = walkMoveSpeed;
-        }
-
-        if (crouchInput == true)
+        else if (crouchInput == true)
         {
             targetMoveSpeed = crouchMoveSpeed;
         }
@@ -89,8 +84,10 @@ public class PlayerController : MonoBehaviour
             targetMoveSpeed = walkMoveSpeed;
         }
 
-        //Step 3: Smoothly Interpolate Current Speed towards Target Speed
-        float lerpSpeed = 1f - Mathf.Pow(0.01f, Time.deltaTime / speedTransitionDuration);
+
+
+            //Step 3: Smoothly Interpolate Current Speed towards Target Speed
+            float lerpSpeed = 1f - Mathf.Pow(0.01f, Time.deltaTime / speedTransitionDuration);
         currentMoveSpeed = Mathf.Lerp(currentMoveSpeed, targetMoveSpeed, lerpSpeed);
 
         //Step 4: Handle Horizontal Movement
