@@ -21,10 +21,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool crouchEnabled = true;
 
 
-    //Input Variables
-    private Vector2 moveInput;
-    private Vector2 lookInput;
-
+    [Header("Move Settings")]
     public float moveSpeed = 5f;
     [SerializeField] private float crouchMoveSpeed = 2.0f;
     [SerializeField] private float walkMoveSpeed = 4.0f;
@@ -36,18 +33,58 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool sprintInput = false;
     [SerializeField] private bool crouchInput = false;
 
+    private Vector3 velocity;
+
+
     [Header("Look Settings")]
     public float horizontalLookSensitivity = 90;
     public float verticalLookSensitivity = 90;
-
     public float LowerLookLimit = -60;
     public float UpperLookLimit = 60;
 
 
+    [Header("Jump & Gravity Settings")]
+    [SerializeField] private bool isGrounded;
+    [SerializeField] private float gravity = 30.0f;
+    [SerializeField] private float jumpHeight = 2.0f;
+
+    private float jumpCooldownAmount = 0.2f;
+    private float jumpCooldownTimer = 0f;
+    private bool jumpRequested = false;
+    //private float groundCheckRadius = 0.1f;
+
+    [Header("Crouch Settings")]
+    private float standingHeight;
+    private Vector3 standingCenter;
+    private float standingCamY;
+    private bool isObstructed = false;
+
+    [SerializeField] private float crouchTransitionDuration = 0.2f; // Time in seconds for crouch/stand transition (approximate completion)
+    [SerializeField] private float crouchingHeight = 1.0f;
+    [SerializeField] private Vector3 crouchingCenter = new Vector3(0, 0.5f, 0);
+    [SerializeField] private float crouchingCamY = 0.75f;
+
+    private float targetHeight;
+    private Vector3 targetCenter;
+    private float targetCamY; // Target Y position for camera root during crouch transition
+
+
+    public Transform spawnPosition;
+
+    //Input Variables
+    private Vector2 moveInput;
+    private Vector2 lookInput;
 
     private void Awake()
     {
-        
+        // Initialize crouch variables
+        standingHeight = characterController.height;
+        standingCenter = characterController.center;
+        standingCamY = cameraRoot.localPosition.y;
+
+        targetHeight = standingHeight;
+        targetCenter = standingCenter;
+        targetCamY = cameraRoot.localPosition.y;
     }
 
     private void Update()
@@ -63,6 +100,9 @@ public class PlayerController : MonoBehaviour
     public void HandlePlayerMovement()
     {
         if (moveEnabled == false) return;
+
+        GroundedCheck();
+        HandleCrouchTransition();
 
         //Step 1: Get Input Direction
         Vector3 moveInputDirection = new Vector3(moveInput.x, 0, moveInput.y);
@@ -86,18 +126,19 @@ public class PlayerController : MonoBehaviour
 
 
 
-            //Step 3: Smoothly Interpolate Current Speed towards Target Speed
-            float lerpSpeed = 1f - Mathf.Pow(0.01f, Time.deltaTime / speedTransitionDuration);
+        //Step 3: Smoothly Interpolate Current Speed towards Target Speed
+        float lerpSpeed = 1f - Mathf.Pow(0.01f, Time.deltaTime / speedTransitionDuration);
         currentMoveSpeed = Mathf.Lerp(currentMoveSpeed, targetMoveSpeed, lerpSpeed);
 
         //Step 4: Handle Horizontal Movement
         Vector3 horizontalMovement = worldMoveDirection * currentMoveSpeed;
 
         //Step 5: Handle Jumping and gravity
-
+        ApplyJumpAndGravity();
 
         //Step 6: Combine Horizontal and Vertical Movement
         Vector3 movement = horizontalMovement;
+        movement.y = velocity.y;
 
         //Step 7: Apply Final Movement
         characterController.Move(movement * Time.deltaTime);
@@ -125,6 +166,118 @@ public class PlayerController : MonoBehaviour
         CameraRoot.localEulerAngles = new Vector3(newRotationX, 0, 0);
     }
 
+    private void ApplyJumpAndGravity()
+    {
+        if(jumpEnabled == true)
+        {
+            if (jumpRequested == true)
+            {
+                velocity.y = Mathf.Sqrt(2f * jumpHeight * gravity);
+
+                jumpRequested = false;
+
+                jumpCooldownTimer = jumpCooldownAmount;
+            }
+        }
+
+        // Apply gravity based on the player's current state (grounded or in air).
+        if (isGrounded && velocity.y < 0)
+        {
+            // If grounded and moving downwards (due to accumulated gravity from previous frames),
+            // snap velocity to a small negative value. This keeps the character firmly on the ground
+            // without allowing gravity to build up indefinitely, preventing "bouncing" or
+            // incorrect ground detection issues.
+
+            velocity.y = -1f;
+        }
+        else  // If not grounded (in the air):
+        {
+            // apply standard gravity
+            velocity.y -= gravity * Time.deltaTime;
+        }
+
+
+        if (jumpCooldownTimer > 0)
+        {
+            jumpCooldownTimer -= Time.deltaTime;
+        }
+    }
+
+    private void HandleCrouchTransition()
+    {
+        bool shouldCrouch = crouchInput == true;
+
+        // if airborne and was crouching, maintain crouch state (prevents standing up from crouch while walking off a ledge)
+        bool wasAlreadyCrouching = characterController.height < (standingHeight - 0.05f);
+
+        if (isGrounded == false && wasAlreadyCrouching)
+        {
+            shouldCrouch = true; // Maintain crouch state if airborne (walking off ledge while crouching)
+        }
+
+        if (shouldCrouch)
+        {
+            targetHeight = crouchingHeight;
+            targetCenter = crouchingCenter;
+            targetCamY = crouchingCamY;
+            isObstructed = false; // No obstruction when intentionally crouching
+        }
+        else
+        {
+            // float maxAllowedHeight = GetMaxAllowedHeight();
+
+            float maxAllowedHeight = 3.0f;
+
+            if (maxAllowedHeight >= standingHeight - 0.05f)
+            {
+                // No obstruction, allow immediate transition to standing
+                targetHeight = standingHeight;
+                targetCenter = standingCenter;
+                targetCamY = standingCamY;
+                isObstructed = false;
+            }
+
+            else
+            {
+                // Obstruction detected, limit height and center
+                targetHeight = Mathf.Min(standingHeight, maxAllowedHeight);
+                float standRatio = Mathf.Clamp01((targetHeight - crouchingHeight) / (standingHeight - crouchingHeight));
+                targetCenter = Vector3.Lerp(crouchingCenter, standingCenter, standRatio);
+                targetCamY = Mathf.Lerp(crouchingCamY, standingCamY, standRatio);
+                isObstructed = true;
+            }
+        }
+
+        // Calculate lerp speed based on desired duration
+        // This formula ensures the transition approximately reaches 99% of the target in 'crouchTransitionDuration' seconds.
+        float lerpSpeed = 1f - Mathf.Pow(0.01f, Time.deltaTime / crouchTransitionDuration);
+
+        // Smoothly transition to targets
+        characterController.height = Mathf.Lerp(characterController.height, targetHeight, lerpSpeed);
+        characterController.center = Vector3.Lerp(characterController.center, targetCenter, lerpSpeed);
+
+        Vector3 currentCamPos = cameraRoot.localPosition;
+        cameraRoot.localPosition = new Vector3(currentCamPos.x, Mathf.Lerp(currentCamPos.y, targetCamY, lerpSpeed), currentCamPos.z);
+
+    }
+
+
+    #region Helper Methods
+
+    public void MovePlayerToSpawnPosition(Transform spawnPosition)
+    {
+        characterController.enabled = false;
+        transform.position = spawnPosition.position;
+        transform.rotation = spawnPosition.rotation;
+        characterController.enabled = true;
+    }
+
+    private void GroundedCheck()
+    {
+        isGrounded = characterController.isGrounded;
+    }
+
+    #endregion
 
     #region Input Methods
 
@@ -143,12 +296,16 @@ public class PlayerController : MonoBehaviour
     {
         if (context.started)
         {
-            Debug.Log("Jump Started");
+            Debug.Log("Jump input started");
+
+            if (jumpEnabled && isGrounded && jumpCooldownTimer <= 0f)
+            {
+                jumpRequested = true;
+
+                jumpCooldownTimer = 0.1f;
+            }
         }
-        if (context.performed)
-        {
-            Debug.Log("Hold");
-        }
+        
     } 
     
     void CrouchInputEvent(InputAction.CallbackContext context)
@@ -157,12 +314,10 @@ public class PlayerController : MonoBehaviour
 
         if (context.started)
         {
-            crouchInput = true;
-        }
-        else if (context.canceled)
-        {
-            crouchInput = false;
-        }
+            crouchInput = !crouchInput;
+
+            Debug.Log("Crouch Input started");
+        }   
     }
 
     void SprintInputEvent(InputAction.CallbackContext context)

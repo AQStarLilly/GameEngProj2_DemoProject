@@ -761,6 +761,37 @@ Transform:
   - {fileID: 330585546}
   m_Father: {fileID: 780482942}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &647344829
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 647344830}
+  m_Layer: 0
+  m_Name: SpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &647344830
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 647344829}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 10, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &677126291
 Mesh:
   m_ObjectHideFlags: 0
@@ -975,11 +1006,24 @@ MonoBehaviour:
   cameraRoot: {fileID: 620561029}
   moveEnabled: 1
   lookEnabled: 1
+  jumpEnabled: 1
+  sprintEnabled: 1
+  crouchEnabled: 1
   moveSpeed: 5
+  crouchMoveSpeed: 2
+  walkMoveSpeed: 4
+  sprintMoveSpeed: 7
+  currentMoveSpeed: 0
+  sprintInput: 0
+  crouchInput: 0
   horizontalLookSensitivity: 90
   verticalLookSensitivity: 90
   LowerLookLimit: -60
   UpperLookLimit: 60
+  isGrounded: 0
+  gravity: 30
+  jumpHeight: 2
+  spawnPosition: {fileID: 647344830}
 --- !u!143 &780482944
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1671,3 +1715,4 @@ SceneRoots:
   - {fileID: 1552663595}
   - {fileID: 499221881}
   - {fileID: 1731238979}
+  - {fileID: 647344830}
