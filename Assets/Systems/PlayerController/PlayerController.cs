@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private bool jumpEnabled = true;
     [SerializeField] private bool sprintEnabled = true;
+    [SerializeField] private bool crouchEnabled = true;
 
 
     //Input Variables
@@ -33,7 +34,7 @@ public class PlayerController : MonoBehaviour
     private float speedTransitionDuration = 0.25f;
 
     [SerializeField] private bool sprintInput = false;
-    private bool crouchInput = false;
+    [SerializeField] private bool crouchInput = false;
 
     [Header("Look Settings")]
     public float horizontalLookSensitivity = 90;
@@ -73,6 +74,15 @@ public class PlayerController : MonoBehaviour
         if(sprintInput == true)
         {
             targetMoveSpeed = sprintMoveSpeed;
+        }
+        else
+        {
+            targetMoveSpeed = walkMoveSpeed;
+        }
+
+        if (crouchInput == true)
+        {
+            targetMoveSpeed = crouchMoveSpeed;
         }
         else
         {
@@ -146,9 +156,15 @@ public class PlayerController : MonoBehaviour
     
     void CrouchInputEvent(InputAction.CallbackContext context)
     {
+        if (crouchEnabled == false) return;
+
         if (context.started)
         {
-            Debug.Log("Crouch Started");
+            crouchInput = true;
+        }
+        else if (context.canceled)
+        {
+            crouchInput = false;
         }
     }
 
