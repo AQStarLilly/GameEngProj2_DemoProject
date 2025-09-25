@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -8,8 +9,15 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    [Header("Manager References")]
-    public InputManager inputManager;
+    [Header("Manager References (Auto-Assigned)")]
+    [SerializeField] private InputManager inputManager;
+    [SerializeField] private GameStateManager gameStateManager;
+    [SerializeField] private PlayerController playerController;
+
+    //Public read-only accessors for other scripts to use the managers
+    public InputManager InputManager => inputManager;
+    public GameStateManager GameStateManager => gameStateManager;
+    public PlayerController PlayerController => playerController;   
 
 
     private void Awake()
@@ -28,6 +36,10 @@ public class GameManager : MonoBehaviour
         }
 
         #endregion
+
+        inputManager ??= GetComponentInChildren<InputManager>();
+        gameStateManager ??= GetComponentInChildren<GameStateManager>();
+        playerController ??= GetComponentInChildren<PlayerController>();
 
         if(inputManager == null)
         {

@@ -1,11 +1,24 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
+using UnityEngine.Assertions.Must;
 
 public class PlayerController : MonoBehaviour
 {
+    public enum MovementState
+    {
+        Idle,
+        Walking,
+        Sprinting,
+        Crouching,
+        Jumping,
+        Falling
+    }
+
+    public MovementState currentMovementState;
+
     //Manager References
-    private InputManager inputManager => GameManager.Instance.inputManager;
+    private InputManager inputManager => GameManager.Instance.InputManager;
     private CharacterController characterController => GetComponent<CharacterController>();
     
     [SerializeField] private Transform cameraRoot;
@@ -68,6 +81,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 targetCenter;
     private float targetCamY; // Target Y position for camera root during crouch transition
 
+    private int playerLayerMask;
 
     public Transform spawnPosition;
 
@@ -77,6 +91,11 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        playerLayerMask = ~LayerMask.GetMask("Player");
+
+        #region Intialize Default Values
+        currentMovementState = MovementState.Idle;
+        
         // Initialize crouch variables
         standingHeight = characterController.height;
         standingCenter = characterController.center;
@@ -85,25 +104,68 @@ public class PlayerController : MonoBehaviour
         targetHeight = standingHeight;
         targetCenter = standingCenter;
         targetCamY = cameraRoot.localPosition.y;
+
+        crouchInput = false;
+        sprintInput = false;
+
+        #endregion
     }
 
-    private void Update()
-    {
-        HandlePlayerMovement();
-    }
-
-    private void LateUpdate()
-    {
-        HandlePlayerLook();
-    }
 
     public void HandlePlayerMovement()
     {
         if (moveEnabled == false) return;
 
+        //Determine movement state
+        DetermineMovementState();
+
+        //Perform ground check
         GroundedCheck();
+
+        //Handle crouch transition
         HandleCrouchTransition();
 
+        //Apply movement
+        ApplyMovement();
+    }
+
+    private void DetermineMovementState()
+    {
+        //Determine current movement state based on inputs and conditions
+        if (isGrounded == false)
+        {
+            if (velocity.y > 0.1f)
+            {
+                currentMovementState = MovementState.Jumping;
+            }
+            else if (velocity.y < 0)
+            {
+                currentMovementState = MovementState.Falling;
+            }
+        }
+        else if (isGrounded == true)
+        {
+            if (crouchInput == true || isObstructed == true)
+            {
+                currentMovementState = MovementState.Crouching;
+            }
+            else if (sprintInput == true && currentMovementState != MovementState.Crouching)
+            {
+                currentMovementState = MovementState.Sprinting;
+            }
+            else if (moveInput.magnitude > 0.1f && sprintInput == false && crouchInput == false)
+            {
+                currentMovementState = MovementState.Walking;
+            }
+            else if (moveInput.magnitude <= 0.1f && sprintInput == false && crouchInput == false)
+            {
+                currentMovementState = MovementState.Idle;
+            }
+        }
+    }
+    
+    private void ApplyMovement()
+    {
         //Step 1: Get Input Direction
         Vector3 moveInputDirection = new Vector3(moveInput.x, 0, moveInput.y);
         Vector3 worldMoveDirection = transform.TransformDirection(moveInputDirection);
@@ -111,17 +173,23 @@ public class PlayerController : MonoBehaviour
         //Step 2: Determine Movement Speed
         float targetMoveSpeed = currentMoveSpeed;
 
-        if(sprintInput == true)
+        switch (currentMovementState) 
         {
-            targetMoveSpeed = sprintMoveSpeed;
-        }
-        else if (crouchInput == true)
-        {
-            targetMoveSpeed = crouchMoveSpeed;
-        }
-        else
-        {
-            targetMoveSpeed = walkMoveSpeed;
+            case MovementState.Crouching:
+                {
+                    targetMoveSpeed = crouchMoveSpeed;
+                    break;
+                }
+            case MovementState.Sprinting:
+                {
+                    targetMoveSpeed = sprintMoveSpeed;
+                    break;
+                }                
+            default:
+                {
+                    targetMoveSpeed = walkMoveSpeed;
+                    break;
+                }
         }
 
         //Step 3: Smoothly Interpolate Current Speed towards Target Speed
@@ -222,10 +290,8 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            // float maxAllowedHeight = GetMaxAllowedHeight();
-
-            float maxAllowedHeight = 3.0f;
-
+            float maxAllowedHeight = GetMaxAllowedHeight();
+           
             if (maxAllowedHeight >= standingHeight - 0.05f)
             {
                 // No obstruction, allow immediate transition to standing
@@ -262,17 +328,35 @@ public class PlayerController : MonoBehaviour
 
     #region Helper Methods
 
+    private void GroundedCheck()
+    {
+        isGrounded = characterController.isGrounded;
+    }
+
+    private float GetMaxAllowedHeight()
+    {
+        //Cast a ray upwards from the character's position to check for obstructions
+        RaycastHit hit;
+        float maxCheckDistance = standingHeight + 0.15f;
+
+        if (Physics.Raycast(transform.position, Vector3.up, out hit, maxCheckDistance, playerLayerMask))
+        {
+            //we hit something so calculate the max height the player can stand
+            float maxHeight = hit.distance - 0.1f;
+
+            maxHeight = Mathf.Max(maxHeight, crouchingHeight);
+
+            return maxHeight; 
+        }
+        return standingHeight;
+    }
+
     public void MovePlayerToSpawnPosition(Transform spawnPosition)
     {
         characterController.enabled = false;
         transform.position = spawnPosition.position;
         transform.rotation = spawnPosition.rotation;
         characterController.enabled = true;
-    }
-
-    private void GroundedCheck()
-    {
-        isGrounded = characterController.isGrounded;
     }
 
     #endregion
@@ -287,7 +371,7 @@ public class PlayerController : MonoBehaviour
     void SetLookEvent(Vector2 inputVector)
     {
         lookInput = new Vector2(inputVector.x, inputVector.y);
-        Debug.Log($"Look Input: {lookInput}");
+        //Debug.Log($"Look Input: {lookInput}");
     }
 
     void JumpInputEvent(InputAction.CallbackContext context)
