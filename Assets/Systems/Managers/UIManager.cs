@@ -8,6 +8,7 @@ public class UIManager : MonoBehaviour
     public GameObject mainMenuUI;
     public GameObject gameplayUI;
     public GameObject pauseMenuUI;
+    public GameObject gameOverUI;
 
     public void Awake()
     {
@@ -19,6 +20,7 @@ public class UIManager : MonoBehaviour
         mainMenuUI.SetActive(false);
         gameplayUI.SetActive(false);
         pauseMenuUI.SetActive(false);
+        gameOverUI.SetActive(false);
     }
 
     public void EnableMainMenuUI()
@@ -37,5 +39,11 @@ public class UIManager : MonoBehaviour
     {
         DisableAllMenuUI();
         pauseMenuUI.SetActive(true);
+    }
+
+    public void EnableGameOverUI()
+    {
+        DisableAllMenuUI();
+        gameOverUI.SetActive(true);
     }
 }

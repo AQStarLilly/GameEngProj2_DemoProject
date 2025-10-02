@@ -14,11 +14,12 @@ public class GameStateManager : MonoBehaviour
     public GameState_MainMenu gameState_MainMenu = GameState_MainMenu.Instance;
     public GameState_Gameplay gameState_Gameplay = GameState_Gameplay.Instance;
     public GameState_Paused gameState_Paused = GameState_Paused.Instance;
+    public GameState_GameOver gameState_GameOver = GameState_GameOver.Instance;
 
 
     private void Start()
     {
-        currentState = gameState_Gameplay;
+        currentState = gameState_MainMenu;
         currentActiveState = currentState.ToString();
         currentState.EnterState();
     }
@@ -81,6 +82,11 @@ public class GameStateManager : MonoBehaviour
 
     public void Play()
     {
+        SwitchToState(gameState_Gameplay);
+    }
+
+    public void Restart()
+    { 
         SwitchToState(gameState_Gameplay);
     }
 
