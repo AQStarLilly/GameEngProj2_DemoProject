@@ -7,6 +7,7 @@ public class GameState_Gameplay : IState
     GameStateManager gameStateManager => GameManager.Instance.GameStateManager;
 
     PlayerController playerController => GameManager.Instance.PlayerController;
+    UIManager UIManager => GameManager.Instance.UIManager;
     #region Singleton Instance
 
     private static readonly GameState_Gameplay instance = new GameState_Gameplay();
@@ -18,7 +19,9 @@ public class GameState_Gameplay : IState
 
     public void EnterState()
     {
-        Debug.Log("Entered gameplay");
+        Time.timeScale = 1f;
+        Cursor.visible = false;
+        UIManager.EnableGameplayUI();       
     }
 
     public void FixedUpdateState()
@@ -29,11 +32,10 @@ public class GameState_Gameplay : IState
     public void UpdateState()
     {
         playerController.HandlePlayerMovement();
-
-        Debug.Log("Running Gameplay Update State");
-        if (Keyboard.current[Key.P].wasPressedThisFrame)
+      
+        if (Keyboard.current[Key.Escape].wasPressedThisFrame)
         {
-            gameStateManager.SwitchToState(GameState_MainMenu.Instance);
+            gameStateManager.Pause();
         }
     }
 

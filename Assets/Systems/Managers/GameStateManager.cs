@@ -13,6 +13,7 @@ public class GameStateManager : MonoBehaviour
     //Instantiate GameStates
     public GameState_MainMenu gameState_MainMenu = GameState_MainMenu.Instance;
     public GameState_Gameplay gameState_Gameplay = GameState_Gameplay.Instance;
+    public GameState_Paused gameState_Paused = GameState_Paused.Instance;
 
 
     private void Start()
@@ -22,6 +23,16 @@ public class GameStateManager : MonoBehaviour
         currentState.EnterState();
     }
 
+    public void SwitchToState(IState newState)
+    {
+        lastState = currentState; //store the current state as the last state
+        lastActiveState = lastState.ToString(); //Update debug info in inspector
+        currentState?.ExitState(); //Exit the current state
+
+        currentState = newState; //switch to the new state
+        currentActiveState = currentState.ToString(); //Update debug info in inspector
+        currentState.EnterState(); //Enter the new state
+    }
 
     #region State Machine Update Calls
 
@@ -41,14 +52,49 @@ public class GameStateManager : MonoBehaviour
     }
     #endregion
 
-    public void SwitchToState(IState newState)
-    {
-        lastState = currentState; //store the current state as the last state
-        lastActiveState = lastState.ToString(); //Update debug info in inspector
-        currentState?.ExitState(); //Exit the current state
 
-        currentState = newState; //switch to the new state
-        currentActiveState = currentState.ToString(); //Update debug info in inspector
-        currentState.EnterState(); //Enter the new state
+    #region Button Call Methods
+    
+    public void Pause()
+    {
+        if (currentState != gameState_Gameplay)
+            return;
+
+        if (currentState == gameState_Gameplay)
+        {
+            SwitchToState(gameState_Paused);
+            return;
+        }
     }
+
+    public void Resume()
+    {
+        if (currentState != gameState_Paused)
+            return;
+
+        if (currentState == gameState_Paused)
+        {
+            SwitchToState(gameState_Gameplay);
+            return;
+        }
+    }
+
+    public void Play()
+    {
+        SwitchToState(gameState_Gameplay);
+    }
+
+    public void MainMenu()
+    {
+        SwitchToState(gameState_MainMenu);
+    }
+
+    public void Quit()
+    {
+        Application.Quit();
+    }
+
+
+
+    #endregion
 }

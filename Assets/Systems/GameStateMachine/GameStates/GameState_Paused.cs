@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class GameState_MainMenu : IState
+public class GameState_Paused : IState
 {
     GameManager gameManager => GameManager.Instance;
     GameStateManager gameStateManager => GameManager.Instance.GameStateManager;
@@ -9,9 +9,9 @@ public class GameState_MainMenu : IState
 
     #region Singleton Instance
 
-    private static readonly GameState_MainMenu instance = new GameState_MainMenu();
+    private static readonly GameState_Paused instance = new GameState_Paused();
 
-    public static GameState_MainMenu Instance = instance;
+    public static GameState_Paused Instance = instance;
 
     #endregion
 
@@ -20,7 +20,7 @@ public class GameState_MainMenu : IState
     {
         Time.timeScale = 0f;  //pause the game
         Cursor.visible = true;
-        UIManager.EnableMainMenuUI();
+        UIManager.EnablePauseMenuUI();
     }
 
     public void FixedUpdateState()
@@ -30,7 +30,10 @@ public class GameState_MainMenu : IState
 
     public void UpdateState()
     {
- 
+        if (Keyboard.current[Key.Escape].wasPressedThisFrame)
+        {
+            gameStateManager.Resume();
+        }
     }
 
     public void LateUpdateState()
@@ -40,6 +43,6 @@ public class GameState_MainMenu : IState
 
     public void ExitState()
     {
-        Debug.Log("Exiting Main Menu State");
+
     }
 }
