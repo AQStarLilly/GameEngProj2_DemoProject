@@ -27,8 +27,16 @@ public class GameStateManager : MonoBehaviour
     public void SwitchToState(IState newState)
     {
         lastState = currentState; //store the current state as the last state
-        lastActiveState = lastState.ToString(); //Update debug info in inspector
-        currentState?.ExitState(); //Exit the current state
+        
+        if (lastState != null)
+        {
+            lastActiveState = lastState.ToString();
+            lastState.ExitState();
+        }
+        else
+        {
+            lastActiveState = "None";
+        }
 
         currentState = newState; //switch to the new state
         currentActiveState = currentState.ToString(); //Update debug info in inspector
