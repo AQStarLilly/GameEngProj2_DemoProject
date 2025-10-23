@@ -1,0 +1,6 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/StyleSheets/Gameplay_USS.uss?fileID=7433441132597879392&amp;guid=64a127b9fa7c2154eb9d91e7675853b1&amp;type=3#Gameplay_USS" />
+    <ui:VisualElement style="flex-grow: 1;">
+        <ui:Label text="Gameplay" name="title" style="width: 400px; white-space: nowrap; text-overflow: clip; -unity-text-align: upper-center; justify-content: flex-start; align-self: center; font-size: 75px;" />
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,9 @@
+.title-label {
+    font-size: 100px;
+}
+
+.menu-buttons {
+}
+
+.menu-buttons:hover {
+}
