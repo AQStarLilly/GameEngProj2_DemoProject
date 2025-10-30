@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PlayerController playerController;
     [SerializeField] private UIManager uiManager;
     [SerializeField] private LevelManager levelManager;
+    [SerializeField] private InteractionManager interactionManager;
 
     //Public read-only accessors for other scripts to use the managers
     public InputManager InputManager => inputManager;
@@ -22,6 +23,7 @@ public class GameManager : MonoBehaviour
     public PlayerController PlayerController => playerController; 
     public UIManager UIManager => uiManager;
     public LevelManager LevelManager => levelManager;
+    public InteractionManager InteractionManager => interactionManager;
 
 
     private void Awake()
@@ -45,7 +47,8 @@ public class GameManager : MonoBehaviour
         gameStateManager ??= GetComponentInChildren<GameStateManager>();
         playerController ??= GetComponentInChildren<PlayerController>();
         uiManager ??= GetComponentInChildren<UIManager>();
-        levelManager ??= GetComponentInChildren<LevelManager>();   
+        levelManager ??= GetComponentInChildren<LevelManager>();  
+        interactionManager ??= GetComponentInChildren<InteractionManager>();
 
         if(inputManager == null)
         {
