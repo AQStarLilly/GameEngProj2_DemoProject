@@ -1,6 +1,7 @@
+using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem.XR.Haptics;
 using UnityEngine.UIElements;
+using UnityEngine.InputSystem.XR.Haptics;
 
 public class UIManager : MonoBehaviour
 {
@@ -8,6 +9,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] private UIDocument mainMenuUI;
     [SerializeField] private UIDocument gameplayUI;
     [SerializeField] private UIDocument pauseMenuUI;
+
+    [Header("Interaction Popup Settings")]
+    [SerializeField] private float popupDisplayTime = 2f; // how long popup stays visible
+    private Label interactionPopupLabel;
+    private Coroutine popupCoroutine;
 
     public void Awake()
     {
@@ -19,8 +25,22 @@ public class UIManager : MonoBehaviour
         if (gameplayUI != null) gameplayUI.gameObject.SetActive(true);
         if (pauseMenuUI != null) pauseMenuUI.gameObject.SetActive(true);
 
-
         DisableAllMenuUI();
+
+        // Try to find popup label when gameplay UI exists
+        if (gameplayUI != null)
+        {
+            var root = gameplayUI.rootVisualElement;
+            interactionPopupLabel = root.Q<Label>("interactionPopup");
+            if (interactionPopupLabel != null)
+            {
+                interactionPopupLabel.style.opacity = 0; // start hidden
+            }
+            else
+            {
+                Debug.LogWarning("'interactionPopup' Label not found in GameplayUI. Make sure your UXML has a Label named 'interactionPopup'.");
+            }
+        }
     }
 
     public void DisableAllMenuUI()
@@ -34,7 +54,7 @@ public class UIManager : MonoBehaviour
     public void EnableMainMenuUI()
     {
         DisableAllMenuUI();
-        mainMenuUI.rootVisualElement.style.display = DisplayStyle.Flex;      
+        mainMenuUI.rootVisualElement.style.display = DisplayStyle.Flex;
     }
 
     public void EnableGameplayUI()
@@ -55,12 +75,9 @@ public class UIManager : MonoBehaviour
         //gameOverUI.SetActive(true);
     }
 
-
-
     private UIDocument FindUIDocument(string name)
     {
         var documents = Object.FindObjectsByType<UIDocument>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-
         foreach (var doc in documents)
         {
             if (doc.name == name)
@@ -70,5 +87,36 @@ public class UIManager : MonoBehaviour
         }
         Debug.LogWarning($"UIDocument '{name}' not found in scene.");
         return null;
+    }
+
+    // ================================
+    // INTERACTION POPUP METHODS BELOW
+    // ================================
+
+    /// <summary>
+    /// Shows a temporary text popup on the gameplay UI.
+    /// </summary>
+    public void ShowInteractionPopup(string message)
+    {
+        if (interactionPopupLabel == null)
+        {
+            Debug.LogWarning("Cannot show popup — interactionPopupLabel not found.");
+            return;
+        }
+
+        // Stop any currently running popup hide coroutine
+        if (popupCoroutine != null)
+            StopCoroutine(popupCoroutine);
+
+        interactionPopupLabel.text = message;
+        interactionPopupLabel.style.opacity = 1f;
+
+        popupCoroutine = StartCoroutine(HidePopupAfterDelay());
+    }
+
+    private IEnumerator HidePopupAfterDelay()
+    {
+        yield return new WaitForSeconds(popupDisplayTime);
+        interactionPopupLabel.style.opacity = 0f;
     }
 }

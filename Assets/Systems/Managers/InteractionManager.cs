@@ -69,8 +69,10 @@ public class InteractionManager : MonoBehaviour
     {
         if (context.performed)
         {
-            if(currentFocusedInteractable != null)
+            if (currentFocusedInteractable != null)
             {
+                string message = currentFocusedInteractable.GetInteractionPrompt();
+                GameManager.Instance.UIManager.ShowInteractionPopup(message);
                 currentFocusedInteractable.OnInteract();
             }
         }
