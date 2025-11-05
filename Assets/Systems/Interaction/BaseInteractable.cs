@@ -6,6 +6,10 @@ using UnityEngine.TextCore.Text;
 
 public abstract class BaseInteractable : MonoBehaviour, IInteractable
 {
+    [Header("Interaction Settings")]
+    [Tooltip("What text will appear when the player interacts with this object.")]
+    [SerializeField] private string interactionPrompt = "Interact";
+
     [Header("Highlight Effect Settings")]
     protected Outline outline;
 
@@ -29,7 +33,7 @@ public abstract class BaseInteractable : MonoBehaviour, IInteractable
 
     public string GetInteractionPrompt()
     {
-        throw new System.NotImplementedException();
+        return interactionPrompt;
     }
 
     public virtual void OnInteract()
@@ -39,6 +43,8 @@ public abstract class BaseInteractable : MonoBehaviour, IInteractable
 
     public void SetFocus(bool focused)
     {
+        if (this == null) return; // object destroyed
+        if (outline == null) return; // outline destroyed
         if (isFocused == focused) return;
 
         isFocused = focused;
