@@ -7,3 +7,14 @@
 
 .menu-buttons:hover {
 }
+
+.unity-progress-bar {
+    height: 40px;
+    margin-bottom: 75px;
+    font-size: 25px;
+    -unity-font-style: bold;
+}
+
+.unity-progress-bar__progress {
+    background-color: rgb(4, 125, 0);
+}

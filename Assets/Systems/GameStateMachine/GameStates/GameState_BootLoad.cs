@@ -52,17 +52,12 @@ public class GameState_BootLoad : IState
 
     public void UpdateState()
     {
-        playerController.HandlePlayerMovement();
-      
-        if (Keyboard.current[Key.Escape].wasPressedThisFrame)
-        {
-            gameStateManager.Pause();
-        }
+        
     }
 
     public void LateUpdateState()
     {
-        playerController.HandlePlayerLook();
+        
     }
 
     public void ExitState()

@@ -15,6 +15,7 @@ public class GameStateManager : MonoBehaviour
     public GameState_Gameplay gameState_Gameplay = GameState_Gameplay.Instance;
     public GameState_Paused gameState_Paused = GameState_Paused.Instance;
     public GameState_BootLoad gameState_BootLoad = GameState_BootLoad.Instance;
+    public GameState_Loading gameState_Loading = GameState_Loading.Instance;
     public GameState_GameOver gameState_GameOver = GameState_GameOver.Instance;
 
 
