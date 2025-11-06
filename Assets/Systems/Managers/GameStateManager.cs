@@ -14,12 +14,13 @@ public class GameStateManager : MonoBehaviour
     public GameState_MainMenu gameState_MainMenu = GameState_MainMenu.Instance;
     public GameState_Gameplay gameState_Gameplay = GameState_Gameplay.Instance;
     public GameState_Paused gameState_Paused = GameState_Paused.Instance;
+    public GameState_BootLoad gameState_BootLoad = GameState_BootLoad.Instance;
     public GameState_GameOver gameState_GameOver = GameState_GameOver.Instance;
 
 
     private void Start()
     {
-        currentState = gameState_MainMenu;
+        currentState = gameState_BootLoad;
         currentActiveState = currentState.ToString();
         currentState.EnterState();
     }
