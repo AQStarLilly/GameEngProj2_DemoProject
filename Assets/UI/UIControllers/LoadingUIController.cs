@@ -15,9 +15,9 @@ public class LoadingUIController : MonoBehaviour
 
     private void OnEnable()
     {
-        progressBar = LoadingUIDoc.rootVisualElement.Q<ProgressBar>("Loading Progress Bar");
+        progressBar = LoadingUIDoc.rootVisualElement.Q<ProgressBar>("ProgressBar");
 
-        if(progressBar == null) Debug.LogError("Loading Progress not found");
+        if(progressBar == null) Debug.LogError("Loading Progress bar not found");
     }
 
     public void UpdateProgressBar(float progress)
