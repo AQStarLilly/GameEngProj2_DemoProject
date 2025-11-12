@@ -9,7 +9,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private UIDocument mainMenuUI;
     [SerializeField] private UIDocument gameplayUI;
     [SerializeField] private UIDocument pauseMenuUI;
+    [SerializeField] private UIDocument loadingUI;
 
+    public LoadingUIController loadingUIController;
     [Header("Interaction Popup Settings")]
     [SerializeField] private float popupDisplayTime = 2f; // how long popup stays visible
     private Label interactionPopupLabel;
@@ -20,10 +22,15 @@ public class UIManager : MonoBehaviour
         mainMenuUI = FindUIDocument("MainMenuUI");
         gameplayUI = FindUIDocument("GameplayUI");
         pauseMenuUI = FindUIDocument("PauseMenuUI");
+        loadingUI = FindUIDocument("Loading");
 
+        loadingUIController = loadingUI.GetComponent<LoadingUIController>();
         if (mainMenuUI != null) mainMenuUI.gameObject.SetActive(true);
         if (gameplayUI != null) gameplayUI.gameObject.SetActive(true);
         if (pauseMenuUI != null) pauseMenuUI.gameObject.SetActive(true);
+        if (loadingUI != null) loadingUI.gameObject.SetActive(true);
+
+
 
         DisableAllMenuUI();
 
@@ -48,6 +55,7 @@ public class UIManager : MonoBehaviour
         mainMenuUI.rootVisualElement.style.display = DisplayStyle.None;
         gameplayUI.rootVisualElement.style.display = DisplayStyle.None;
         pauseMenuUI.rootVisualElement.style.display = DisplayStyle.None;
+        loadingUI.rootVisualElement.style.display = DisplayStyle.None;
         //gameOverUI.SetActive(false);
     }
 
@@ -67,6 +75,12 @@ public class UIManager : MonoBehaviour
     {
         DisableAllMenuUI();
         pauseMenuUI.rootVisualElement.style.display = DisplayStyle.Flex;
+    }
+
+    public void EnableLoadingUI()
+    {
+        DisableAllMenuUI();
+        loadingUI.rootVisualElement.style.display = DisplayStyle.Flex;
     }
 
     public void EnableGameOverUI()

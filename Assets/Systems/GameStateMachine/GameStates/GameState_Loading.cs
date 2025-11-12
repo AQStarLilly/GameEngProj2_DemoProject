@@ -19,6 +19,8 @@ public class GameState_Loading : IState
 
     public void EnterState()
     {
+        Debug.Log("Entered GameState_Loading");
+        UIManager.EnableLoadingUI();
         Time.timeScale = 1f;
         Cursor.visible = false;       
     }
@@ -40,6 +42,6 @@ public class GameState_Loading : IState
 
     public void ExitState()
     {
-
+        Debug.Log("Exited GameState_Loading");
     }
 }

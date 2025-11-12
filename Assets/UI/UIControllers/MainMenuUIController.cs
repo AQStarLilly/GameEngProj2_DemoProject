@@ -45,7 +45,7 @@ public class MainMenuUIController : MonoBehaviour
 
     private void OnPlayButtonClicked()
     {
-        levelManager.LoadLevel("Level1");
+        levelManager.LoadScene(2);
     }
 
     private void QuitButtonClicked()

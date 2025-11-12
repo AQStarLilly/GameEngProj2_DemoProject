@@ -28,11 +28,12 @@ public class GameState_BootLoad : IState
         //if bootloader is the only active scene, redirect to main menu
         if (SceneManager.sceneCount == 1 && SceneManager.GetActiveScene().name == "BootLoader")
         {
+            Debug.Log("Gamesate_Bootload");
             GameManager.Instance.LevelManager.LoadMainMenu();
             return;
         }
         //if bootloader is initialized while in the main menu scene
-        else if(SceneManager.sceneCount > 1 && SceneManager.GetActiveScene().name == "MainMenu")
+        else if(SceneManager.sceneCount > 1 && SceneManager.GetActiveScene().name == "Main Menu")
         {
             gameManager.GameStateManager.SwitchToState(GameState_MainMenu.Instance);
             return;
