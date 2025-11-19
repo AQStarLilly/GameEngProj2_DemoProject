@@ -3,7 +3,7 @@
     <ui:VisualElement style="flex-grow: 1; background-color: rgb(0, 0, 0); align-items: center; justify-content: flex-end;">
         <ui:VisualElement name="LoadingAreaInfo" style="width: 60%; height: 20%; justify-content: center;">
             <ui:Label text="Loading..." name="LoadingLabel" style="color: rgb(224, 193, 193); font-size: 30px; -unity-font-style: italic; padding-left: 20px;" />
-            <ui:ProgressBar value="22" title="100%" high-value="1" name="ProgressBar" class="unity-progress-bar" />
+            <ui:ProgressBar value="100" title="0%" high-value="1" name="ProgressBar" low-value="0" class="unity-progress-bar" />
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

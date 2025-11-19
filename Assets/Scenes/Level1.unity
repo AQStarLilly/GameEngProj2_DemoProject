@@ -8366,7 +8366,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9eb725b880f079647bcc29619ac0c3dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetSceneName: Level2
+  targetId: 0
 --- !u!65 &519824526
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -14331,15 +14331,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8790899620794085776, guid: b24cf0e800d0d624eb9eecc3a2e70c93, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5.91
+      value: -4.443
       objectReference: {fileID: 0}
     - target: {fileID: 8790899620794085776, guid: b24cf0e800d0d624eb9eecc3a2e70c93, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.01
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 8790899620794085776, guid: b24cf0e800d0d624eb9eecc3a2e70c93, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -6.21
+      value: -4.862
       objectReference: {fileID: 0}
     - target: {fileID: 8790899620794085776, guid: b24cf0e800d0d624eb9eecc3a2e70c93, type: 3}
       propertyPath: m_LocalRotation.w

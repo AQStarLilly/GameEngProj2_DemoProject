@@ -671,6 +671,8 @@ MonoBehaviour:
   mainMenuUI: {fileID: 89786702}
   gameplayUI: {fileID: 762752454}
   pauseMenuUI: {fileID: 1337835903}
+  loadingUI: {fileID: 56937124}
+  loadingUIController: {fileID: 56937123}
   popupDisplayTime: 2
 --- !u!1 &1337835900
 GameObject:

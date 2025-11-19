@@ -23,5 +23,6 @@ public class LoadingUIController : MonoBehaviour
     public void UpdateProgressBar(float progress)
     {
         progressBar.value = progress;
+        progressBar.title = $"{(int)(progress * 100)}%";
     }
 }
